@@ -3,14 +3,19 @@ int HashTableClosed<T>::insert(const T& key)
 {
     // TO DO:
     int probes = 0;
-    int index = 0;
-    for (int i = 0; occupied[index]; i++)
+    for (int i = 0; i < M; ++i)
     {
-        index = probeIndex(key, i);
+        int index = probeIndex(key, i);
         probes++;
+
+        if (!occupied[index])
+        {
+            table[index] = key;
+            occupied[index] = true;
+            N++;
+            return probes;
+        }
     }
-    occupied[index] = true;
-    table[index] = key;
 
     return probes;
 }
@@ -20,12 +25,17 @@ pair<bool, int> HashTableClosed<T>::search(const T& key) const
 {
     // TO DO:
     int probes = 0;
-    int index = 0;
-    for (int i = 0; occupied[index]; i++)
+
+    for (int i = 0; i < M; ++i)
     {
-        index = probeIndex(key, i);
+        int index = probeIndex(key, i);
         probes++;
-        if (table[index] == key) return {true, probes};
+
+        if (!occupied[index])
+            return {false, probes};
+
+        if (table[index] == key)
+            return {true, probes};
     }
 
     return {false, probes};
